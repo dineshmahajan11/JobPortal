@@ -1,0 +1,29 @@
+﻿using JobPortal.Data;
+using JobPortal.Models;
+
+namespace JobPortal.Repositories
+{
+    public class JobRepository : IJobRepository
+    {
+        private readonly ApplicationDbContext _context;
+
+        public JobRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public List<Job> GetAll()
+        {
+            return _context.Jobs.ToList();
+        }
+
+        public Job Add(Job job)
+        {
+            _context.Jobs.Add(job);
+
+            _context.SaveChanges();
+
+            return job;
+        }
+    }
+}

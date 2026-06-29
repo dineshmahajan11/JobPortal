@@ -53,7 +53,22 @@ namespace JobPortal.Services
 
         public User? Login(LoginDto dto)
         {
-            throw new NotImplementedException();
+            var user = _userRepository.GetByEmail(dto.Email);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            bool isPasswordValid =
+                BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+
+            if (!isPasswordValid)
+            {
+                return null;
+            }
+
+            return user;
         }
     }
 

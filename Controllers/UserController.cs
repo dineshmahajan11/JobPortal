@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using JobPortal.DTOs;
 using JobPortal.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobPortal.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase

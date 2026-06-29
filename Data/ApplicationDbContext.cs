@@ -11,5 +11,16 @@ namespace JobPortal.Data
         }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Job> Jobs { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Job>()
+                .Property(j => j.Salary)
+                .HasPrecision(18, 2);
+        }
     }
 }
