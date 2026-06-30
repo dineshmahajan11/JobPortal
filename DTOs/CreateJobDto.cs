@@ -12,6 +12,5 @@
 
         public string CompanyName { get; set; } = string.Empty;
 
-        public int RecruiterId { get; set; }
     }
 }

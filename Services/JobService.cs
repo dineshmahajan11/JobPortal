@@ -18,7 +18,7 @@ namespace JobPortal.Services
             return _jobRepository.GetAll();
         }
 
-        public Job CreateJob(CreateJobDto dto)
+        public Job CreateJob(CreateJobDto dto, int recruiterId)
         {
             var job = new Job
             {
@@ -27,11 +27,38 @@ namespace JobPortal.Services
                 Location = dto.Location,
                 Salary = dto.Salary,
                 CompanyName = dto.CompanyName,
-                RecruiterId = dto.RecruiterId,
+                RecruiterId = recruiterId,
                 CreatedDate = DateTime.UtcNow
             };
 
             return _jobRepository.Add(job);
+        }
+
+        public Job? GetJobById(int id)
+        {
+            return _jobRepository.GetById(id);
+        }
+
+        public Job? UpdateJob(int id, CreateJobDto dto, int recruiterId)
+        {
+            var job = _jobRepository.GetById(id);
+
+            if (job == null)
+                return null;
+
+            job.Title = dto.Title;
+            job.Description = dto.Description;
+            job.Location = dto.Location;
+            job.CompanyName = dto.CompanyName;
+            job.Salary = dto.Salary;
+            job.RecruiterId = recruiterId;
+
+            return _jobRepository.Update(job);
+        }
+
+        public bool DeleteJob(int id)
+        {
+            return _jobRepository.Delete(id);
         }
     }
 }

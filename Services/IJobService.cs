@@ -7,6 +7,12 @@ namespace JobPortal.Services
     {
         List<Job> GetAllJobs();
 
-        Job CreateJob(CreateJobDto dto);
+        Job CreateJob(CreateJobDto dto, int recruiterId);
+
+        Job? GetJobById(int id);
+
+        Job? UpdateJob(int id, CreateJobDto dto, int recruiterId);
+
+        bool DeleteJob(int id);
     }
 }

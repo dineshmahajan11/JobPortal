@@ -25,5 +25,30 @@ namespace JobPortal.Repositories
 
             return job;
         }
+
+        public Job? GetById(int id)
+        {
+            return _context.Jobs.FirstOrDefault(j => j.Id == id);
+        }
+
+        public Job Update(Job job)
+        {
+            _context.Jobs.Update(job);
+            _context.SaveChanges();
+
+            return job;
+        }
+        public bool Delete(int id)
+        {
+            var job = _context.Jobs.FirstOrDefault(j => j.Id == id);
+
+            if (job == null)
+                return false;
+
+            _context.Jobs.Remove(job);
+            _context.SaveChanges();
+
+            return true;
+        }
     }
 }

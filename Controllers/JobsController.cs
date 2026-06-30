@@ -2,6 +2,7 @@
 using JobPortal.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace JobPortal.Controllers
 {
@@ -23,12 +24,54 @@ namespace JobPortal.Controllers
             return Ok(_jobService.GetAllJobs());
         }
 
+        [Authorize(Roles = "Recruiter")]
         [HttpPost]
         public IActionResult CreateJob(CreateJobDto dto)
         {
-            var job = _jobService.CreateJob(dto);
+            var recruiterId = int.Parse(
+                User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+            var job = _jobService.CreateJob(dto, recruiterId);
 
             return Ok(job);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetJob(int id)
+        {
+            var job = _jobService.GetJobById(id);
+
+            if (job == null)
+                return NotFound();
+
+            return Ok(job);
+        }
+
+        [Authorize(Roles = "Recruiter")]
+        [HttpPut("{id}")]
+        public IActionResult UpdateJob(int id, CreateJobDto dto)
+        {
+            var recruiterId = int.Parse(
+                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+
+            var job = _jobService.UpdateJob(id, dto, recruiterId);
+
+            if (job == null)
+                return NotFound();
+
+            return Ok(job);
+        }
+
+        [Authorize(Roles = "Recruiter")]
+        [HttpDelete("{id}")]
+        public IActionResult DeleteJob(int id)
+        {
+            var deleted = _jobService.DeleteJob(id);
+
+            if (!deleted)
+                return NotFound();
+
+            return Ok("Job deleted successfully.");
         }
     }
 }

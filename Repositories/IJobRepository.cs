@@ -7,5 +7,10 @@ namespace JobPortal.Repositories
         List<Job> GetAll();
 
         Job Add(Job job);
+        Job? GetById(int id);
+
+        Job Update(Job job);
+
+        bool Delete(int id);
     }
 }
