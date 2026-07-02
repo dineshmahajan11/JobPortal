@@ -67,6 +67,8 @@ namespace JobPortal
             builder.Services.AddScoped<IJobRepository, JobRepository>();
             builder.Services.AddScoped<IJobService, JobService>();
             builder.Services.AddScoped<JwtHelper>();
+            builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
+            builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 
             // JWT Authentication
             builder.Services.AddAuthentication(
