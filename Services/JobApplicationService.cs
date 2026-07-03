@@ -35,5 +35,20 @@ namespace JobPortal.Services
         {
             return _repository.GetByUserId(userId);
         }
+        public List<ApplicantDto> GetApplicantsForJob(int jobId)
+        {
+            return _repository.GetApplicantsForJob(jobId);
+        }
+        public JobApplication? UpdateStatus(int applicationId, string status)
+        {
+            var application = _repository.GetById(applicationId);
+
+            if (application == null)
+                return null;
+
+            application.Status = status;
+
+            return _repository.Update(application);
+        }
     }
 }

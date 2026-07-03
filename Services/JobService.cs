@@ -60,5 +60,10 @@ namespace JobPortal.Services
         {
             return _jobRepository.Delete(id);
         }
+
+        public List<RecruiterJobDto> GetRecruiterJobs(int recruiterId)
+        {
+            return _jobRepository.GetRecruiterJobs(recruiterId);
+        }
     }
 }

@@ -1,4 +1,7 @@
-﻿using JobPortal.Models;
+﻿using JobPortal.DTOs;
+using JobPortal.Models;
+
+
 
 namespace JobPortal.Repositories
 {
@@ -12,5 +15,8 @@ namespace JobPortal.Repositories
         Job Update(Job job);
 
         bool Delete(int id);
+        List<RecruiterJobDto> GetRecruiterJobs(int recruiterId);
+       
+
     }
 }

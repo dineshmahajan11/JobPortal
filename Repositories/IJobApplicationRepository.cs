@@ -1,4 +1,5 @@
-﻿using JobPortal.Models;
+﻿using JobPortal.DTOs;
+using JobPortal.Models;
 
 namespace JobPortal.Repositories
 {
@@ -9,5 +10,11 @@ namespace JobPortal.Repositories
         bool AlreadyApplied(int jobId, int userId);
 
         List<JobApplication> GetByUserId(int userId);
+
+        List<ApplicantDto> GetApplicantsForJob(int jobId);
+
+        JobApplication? GetById(int id);
+
+        JobApplication Update(JobApplication application);
     }
 }

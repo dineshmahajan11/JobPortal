@@ -17,5 +17,9 @@
         public DateTime CreatedDate { get; set; }
 
         public int RecruiterId { get; set; }
+
+        public ICollection<JobApplication> Applications { get; set; }
+        = new List<JobApplication>();
+        public User Recruiter { get; set; } = null!;
     }
 }

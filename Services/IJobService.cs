@@ -14,5 +14,7 @@ namespace JobPortal.Services
         Job? UpdateJob(int id, CreateJobDto dto, int recruiterId);
 
         bool DeleteJob(int id);
+        List<RecruiterJobDto> GetRecruiterJobs(int recruiterId);
+
     }
 }

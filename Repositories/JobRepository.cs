@@ -1,5 +1,7 @@
 ﻿using JobPortal.Data;
+using JobPortal.DTOs;
 using JobPortal.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobPortal.Repositories
 {
@@ -50,5 +52,21 @@ namespace JobPortal.Repositories
 
             return true;
         }
+
+        public List<RecruiterJobDto> GetRecruiterJobs(int recruiterId)
+        {
+            return _context.Jobs
+                .Where(j => j.RecruiterId == recruiterId)
+                .Select(j => new RecruiterJobDto
+                {
+                    Id = j.Id,
+                    Title = j.Title,
+                    CompanyName = j.CompanyName,
+                    Location = j.Location,
+                    TotalApplications = j.Applications.Count()
+                })
+                .ToList();
+        }
+      
     }
 }

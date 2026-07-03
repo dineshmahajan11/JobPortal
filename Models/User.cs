@@ -13,5 +13,7 @@
         public string Role { get; set; } = "JobSeeker";
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public ICollection<JobApplication> Applications { get; set; }
+    = new List<JobApplication>();
     }
 }

@@ -11,5 +11,7 @@
         public DateTime AppliedDate { get; set; }
 
         public string Status { get; set; } = "Applied";
+        public Job Job { get; set; } = null!;
+        public User User { get; set; } = null!;
     }
 }

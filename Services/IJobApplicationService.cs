@@ -8,5 +8,7 @@ namespace JobPortal.Services
         JobApplication Apply(ApplyJobDto dto, int userId);
 
         List<JobApplication> GetMyApplications(int userId);
+        List<ApplicantDto> GetApplicantsForJob(int jobId);
+        JobApplication? UpdateStatus(int applicationId, string status);
     }
 }
