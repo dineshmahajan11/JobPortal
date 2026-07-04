@@ -67,6 +67,20 @@ namespace JobPortal.Repositories
                 })
                 .ToList();
         }
-      
+
+        //public List<RecruiterJobDto> GetRecruiterJobs(int recruiterId)
+        //{
+        //    return _context.Jobs
+        //        .Where(j => j.RecruiterId == recruiterId)
+        //        .Select(j => new RecruiterJobDto
+        //        {
+        //            Id = j.Id,
+        //            Title = j.Title,
+        //            CompanyName = j.CompanyName,
+        //            Location = j.Location,
+        //            TotalApplications = j.Applications.Count()
+        //        })
+        //        .ToList();
+        //}
     }
 }
