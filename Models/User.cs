@@ -11,8 +11,9 @@
         public string PasswordHash { get; set; } = string.Empty;
 
         public string Role { get; set; } = "JobSeeker";
+        public string? ResumeUrl { get; set; }
 
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public ICollection<JobApplication> Applications { get; set; }
     = new List<JobApplication>();
     }
