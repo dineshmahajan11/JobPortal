@@ -12,5 +12,8 @@ namespace JobPortal.Services
         User Register(RegisterDto dto);
 
         User? Login(LoginDto dto);
+        void UpdateUser(User user);
+
+        User? GetById(int id);
     }
 }

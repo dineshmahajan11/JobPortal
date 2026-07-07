@@ -65,5 +65,18 @@ namespace JobPortal.Services
         {
             return _jobRepository.GetRecruiterJobs(recruiterId);
         }
+        public List<Job> Search(
+        string? keyword,
+        string? location,
+        int page,
+        int pageSize)
+        {
+            return _jobRepository.Search(
+                keyword,
+                location,
+                page,
+                pageSize);
+        }
+
     }
 }

@@ -10,9 +10,11 @@ namespace JobPortal.Repositories
 
         User Add(User user);
         User? GetByEmail(string email);
-       
 
-       
+        User? GetById(int id);
+
+        void Update(User user);
+
     }
 
 

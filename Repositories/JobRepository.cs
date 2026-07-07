@@ -67,20 +67,30 @@ namespace JobPortal.Repositories
                 })
                 .ToList();
         }
+        public List<Job> Search(
+        string? keyword,
+        string? location,
+        int page,
+        int pageSize)
+        {
+            var query = _context.Jobs.AsQueryable();
 
-        //public List<RecruiterJobDto> GetRecruiterJobs(int recruiterId)
-        //{
-        //    return _context.Jobs
-        //        .Where(j => j.RecruiterId == recruiterId)
-        //        .Select(j => new RecruiterJobDto
-        //        {
-        //            Id = j.Id,
-        //            Title = j.Title,
-        //            CompanyName = j.CompanyName,
-        //            Location = j.Location,
-        //            TotalApplications = j.Applications.Count()
-        //        })
-        //        .ToList();
-        //}
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                query = query.Where(j => j.Title.Contains(keyword));
+            }
+
+            if (!string.IsNullOrWhiteSpace(location))
+            {
+                query = query.Where(j => j.Location.Contains(location));
+            }
+
+            return query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+
+        }
     }
 }

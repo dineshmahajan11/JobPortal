@@ -16,7 +16,12 @@ namespace JobPortal.Repositories
 
         bool Delete(int id);
         List<RecruiterJobDto> GetRecruiterJobs(int recruiterId);
-       
+        List<Job> Search(
+        string? keyword,
+        string? location,
+        int page,
+        int pageSize);
+
 
     }
 }

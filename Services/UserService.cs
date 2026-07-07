@@ -70,6 +70,15 @@ namespace JobPortal.Services
 
             return user;
         }
+        public User? GetById(int id)
+        {
+            return _userRepository.GetById(id);
+        }
+
+        public void UpdateUser(User user)
+        {
+            _userRepository.Update(user);
+        }
     }
 
 

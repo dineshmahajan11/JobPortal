@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Mappings\" />
+    <Folder Include="wwwroot\uplods\resumes\" />
   </ItemGroup>
 
 </Project>

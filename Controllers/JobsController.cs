@@ -73,5 +73,20 @@ namespace JobPortal.Controllers
 
             return Ok("Job deleted successfully.");
         }
+
+        [HttpGet("search")]
+        public IActionResult Search(
+        string? keyword,
+        string? location,
+        int page = 1,
+        int pageSize = 10)
+            {
+                return Ok(
+                    _jobService.Search(
+                        keyword,
+                        location,
+                        page,
+                        pageSize));
+            }
     }
 }

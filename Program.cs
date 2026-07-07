@@ -108,6 +108,7 @@ namespace JobPortal
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseAuthentication();
 

@@ -30,5 +30,16 @@ namespace JobPortal.Repositories
         {
             return _context.Users.FirstOrDefault(x => x.Email == email);
         }
+
+        public User? GetById(int id)
+        {
+            return _context.Users.FirstOrDefault(u => u.Id == id);
+        }
+
+        public void Update(User user)
+        {
+            _context.Users.Update(user);
+            _context.SaveChanges();
+        }
     }
 }
