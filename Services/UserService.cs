@@ -1,16 +1,19 @@
-﻿using JobPortal.DTOs;
+﻿using AutoMapper;
+using JobPortal.DTOs;
 using JobPortal.Models;
 using JobPortal.Repositories;
+using AutoMapper;
 
 namespace JobPortal.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-
-    public UserService(IUserRepository userRepository)
+        private readonly IMapper _mapper;
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public List<User> GetAllUsers()

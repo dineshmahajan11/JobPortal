@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using JobPortal.DTOs;
-using JobPortal.Services;
+﻿using JobPortal.DTOs;
+using JobPortal.DTOs.JobPortal.DTOs;
 using JobPortal.Helpers;
+using JobPortal.Models;
+using JobPortal.Services;
+using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace JobPortal.Controllers
 {
@@ -11,12 +14,13 @@ namespace JobPortal.Controllers
     {
         private readonly IUserService _userService;
         private readonly JwtHelper _jwtHelper;
+        private readonly IMapper _mapper;
 
-
-        public AuthController(IUserService userService,JwtHelper jwtHelper)
+        public AuthController(IUserService userService,JwtHelper jwtHelper,IMapper mapper)
         {
             _userService = userService;
             _jwtHelper = jwtHelper;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -26,7 +30,12 @@ namespace JobPortal.Controllers
             {
                 var user = _userService.Register(dto);
 
-                return Ok(user);
+                return Ok(new ApiResponse<User>
+                {
+                    Success = true,
+                    Message = "User registered successfully.",
+                    Data = user
+                });
             }
             catch (Exception ex)
             {
@@ -41,14 +50,27 @@ namespace JobPortal.Controllers
 
             if (user == null)
             {
-                return Unauthorized("Invalid email or password");
+                return Unauthorized(new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "Invalid email or password.",
+                    Data = null
+                });
             }
 
             var token = _jwtHelper.GenerateToken(user);
 
-            return Ok(new
+            var response = new LoginResponseDto
             {
-                Token = token
+                Token = token,
+                User = _mapper.Map<UserDto>(user)
+            };
+
+            return Ok(new ApiResponse<LoginResponseDto>
+            {
+                Success = true,
+                Message = "Login successful.",
+                Data = response
             });
         }
     }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using JobPortal.Mappings;
 
 namespace JobPortal
 {
@@ -64,6 +65,7 @@ namespace JobPortal
             // Dependency Injection
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddScoped<IJobRepository, JobRepository>();
             builder.Services.AddScoped<IJobService, JobService>();
             builder.Services.AddScoped<JwtHelper>();
@@ -100,6 +102,7 @@ namespace JobPortal
 
             var app = builder.Build();
 
+            app.UseMiddleware<JobPortal.Middleware.ExceptionMiddleware>();
             // Configure pipeline
             if (app.Environment.IsDevelopment())
             {

@@ -16,7 +16,7 @@ namespace JobPortal.Repositories
 
         bool Delete(int id);
         List<RecruiterJobDto> GetRecruiterJobs(int recruiterId);
-        List<Job> Search(
+        PagedResultDto<JobDto> Search(
         string? keyword,
         string? location,
         int page,

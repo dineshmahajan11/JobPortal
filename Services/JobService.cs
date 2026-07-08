@@ -2,6 +2,7 @@
 using JobPortal.Models;
 using JobPortal.Repositories;
 
+
 namespace JobPortal.Services
 {
     public class JobService : IJobService
@@ -65,17 +66,13 @@ namespace JobPortal.Services
         {
             return _jobRepository.GetRecruiterJobs(recruiterId);
         }
-        public List<Job> Search(
+        public PagedResultDto<JobDto> Search(
         string? keyword,
         string? location,
         int page,
         int pageSize)
         {
-            return _jobRepository.Search(
-                keyword,
-                location,
-                page,
-                pageSize);
+            return _jobRepository.Search(keyword, location, page, pageSize);
         }
 
     }

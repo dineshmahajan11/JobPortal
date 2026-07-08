@@ -67,7 +67,7 @@ namespace JobPortal.Repositories
                 })
                 .ToList();
         }
-        public List<Job> Search(
+        public PagedResultDto<JobDto> Search(
         string? keyword,
         string? location,
         int page,
@@ -85,12 +85,34 @@ namespace JobPortal.Repositories
                 query = query.Where(j => j.Location.Contains(location));
             }
 
-            return query
+            int totalRecords = query.Count();
+
+            var jobs = query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
+                .Select(j => new JobDto
+                {
+                    Id = j.Id,
+                    Title = j.Title,
+                    Description = j.Description,
+                    CompanyName = j.CompanyName,
+                    Location = j.Location,
+                    Salary = j.Salary,
+                    CreatedDate = j.CreatedDate
+                })
                 .ToList();
 
-
+            return new PagedResultDto<JobDto>
+            {
+                Items = jobs,
+                Page = page,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                TotalPages = (int)Math.Ceiling((double)totalRecords / pageSize)
+            };
         }
+
+
     }
+    
 }

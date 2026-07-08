@@ -80,13 +80,17 @@ namespace JobPortal.Controllers
         string? location,
         int page = 1,
         int pageSize = 10)
+        {
+            var result = _jobService.Search(keyword, location, page, pageSize);
+
+            return Ok(new ApiResponse<PagedResultDto<JobDto>>
             {
-                return Ok(
-                    _jobService.Search(
-                        keyword,
-                        location,
-                        page,
-                        pageSize));
-            }
+                Success = true,
+                Message = "Jobs fetched successfully.",
+                Data = result
+            });
+        }
+
+
     }
 }
