@@ -15,6 +15,9 @@
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public ICollection<JobApplication> Applications { get; set; }
-    = new List<JobApplication>();
+        = new List<JobApplication>();
+
+        public ICollection<SavedJob> SavedJobs { get; set; }
+        = new List<SavedJob>();
     }
 }

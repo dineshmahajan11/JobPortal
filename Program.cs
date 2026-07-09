@@ -1,13 +1,19 @@
-using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using JobPortal.Data;
+using JobPortal.DTOs;
+using JobPortal.Helpers;
+using JobPortal.Mappings;
+using JobPortal.Middleware;
 using JobPortal.Repositories;
 using JobPortal.Services;
-using JobPortal.Helpers;
+using JobPortal.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
-using JobPortal.Mappings;
+using System.Text;
 
 namespace JobPortal
 {
@@ -17,8 +23,79 @@ namespace JobPortal
         {
             var builder = WebApplication.CreateBuilder(args);
 
-        // Controllers
-        builder.Services.AddControllers();
+            // Controllers
+            builder.Services.AddControllers();
+
+            // AutoMapper
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+            // FluentValidation
+            builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
+            builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddFluentValidationClientsideAdapters();
+
+            // Custom Validation Response
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState
+                        .Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                    return new BadRequestObjectResult(new ApiResponse<List<string>>
+                    {
+                        Success = false,
+                        Message = "Validation failed.",
+                        Data = errors
+                    });
+                };
+            });
+
+            // Database
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Dependency Injection - Repositories
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IJobRepository, JobRepository>();
+            builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
+            builder.Services.AddScoped<ISavedJobRepository, SavedJobRepository>();
+            builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+
+            // Dependency Injection - Services
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IJobService, JobService>();
+            builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
+            builder.Services.AddScoped<ISavedJobService, SavedJobService>();
+            builder.Services.AddScoped<IDashboardService, DashboardService>();
+
+            // Helpers
+            builder.Services.AddScoped<JwtHelper>();
+
+            // JWT Authentication
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                    };
+                });
+
+            builder.Services.AddAuthorization();
 
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
@@ -38,72 +115,30 @@ namespace JobPortal
                     Scheme = "bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Enter JWT Token"
+                    Description = "Enter: Bearer {your JWT token}"
                 });
 
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
                 {
-                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
-            });
-
-            // Database
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            // Dependency Injection
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
-            builder.Services.AddScoped<IJobRepository, JobRepository>();
-            builder.Services.AddScoped<IJobService, JobService>();
-            builder.Services.AddScoped<JwtHelper>();
-            builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
-            builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
-
-            // JWT Authentication
-            builder.Services.AddAuthentication(
-                JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters =
-                        new TokenValidationParameters
-                        {
-                            ValidateIssuer = true,
-                            ValidateAudience = true,
-                            ValidateLifetime = true,
-                            ValidateIssuerSigningKey = true,
-
-                            ValidIssuer =
-                                builder.Configuration["Jwt:Issuer"],
-
-                            ValidAudience =
-                                builder.Configuration["Jwt:Audience"],
-
-                            IssuerSigningKey =
-                                new SymmetricSecurityKey(
-                                    Encoding.UTF8.GetBytes(
-                                        builder.Configuration["Jwt:Key"]!))
-                        };
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
                 });
-
-            builder.Services.AddAuthorization();
+            });
 
             var app = builder.Build();
 
-            app.UseMiddleware<JobPortal.Middleware.ExceptionMiddleware>();
-            // Configure pipeline
+            // Global Exception Middleware
+            app.UseMiddleware<ExceptionMiddleware>();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -111,6 +146,7 @@ namespace JobPortal
             }
 
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
             app.UseAuthentication();

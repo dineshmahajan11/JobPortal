@@ -5,13 +5,13 @@ namespace JobPortal.Services
 {
     public interface IJobService
     {
-        List<Job> GetAllJobs();
+        List<JobDto> GetAllJobs();
 
-        Job CreateJob(CreateJobDto dto, int recruiterId);
+        JobDto CreateJob(CreateJobDto dto, int recruiterId);
 
-        Job? GetJobById(int id);
+        JobDto? GetJobById(int id);
 
-        Job? UpdateJob(int id, CreateJobDto dto, int recruiterId);
+        JobDto? UpdateJob(int id, CreateJobDto dto, int recruiterId);
 
         bool DeleteJob(int id);
         List<RecruiterJobDto> GetRecruiterJobs(int recruiterId);

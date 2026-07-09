@@ -1,10 +1,9 @@
-﻿using JobPortal.DTOs;
+﻿using AutoMapper;
+using JobPortal.DTOs;
 using JobPortal.DTOs.JobPortal.DTOs;
 using JobPortal.Helpers;
-using JobPortal.Models;
 using JobPortal.Services;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 
 namespace JobPortal.Controllers
 {
@@ -15,32 +14,38 @@ namespace JobPortal.Controllers
         private readonly IUserService _userService;
         private readonly JwtHelper _jwtHelper;
         private readonly IMapper _mapper;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IUserService userService,JwtHelper jwtHelper,IMapper mapper)
+        public AuthController(
+            IUserService userService,
+            JwtHelper jwtHelper,
+            IMapper mapper,
+            ILogger<AuthController> logger)
         {
             _userService = userService;
             _jwtHelper = jwtHelper;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost("register")]
         public IActionResult Register(RegisterDto dto)
         {
-            try
-            {
-                var user = _userService.Register(dto);
+            var user = _userService.Register(dto);
 
-                return Ok(new ApiResponse<User>
+            var userDto = _mapper.Map<UserDto>(user);
+
+            _logger.LogInformation(
+                "New user registered with email {Email}",
+                user.Email);
+
+            return StatusCode(StatusCodes.Status201Created,
+                new ApiResponse<UserDto>
                 {
                     Success = true,
                     Message = "User registered successfully.",
-                    Data = user
+                    Data = userDto
                 });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
 
         [HttpPost("login")]
@@ -50,6 +55,10 @@ namespace JobPortal.Controllers
 
             if (user == null)
             {
+                _logger.LogWarning(
+                    "Failed login attempt for email {Email}",
+                    dto.Email);
+
                 return Unauthorized(new ApiResponse<string>
                 {
                     Success = false,
@@ -66,6 +75,10 @@ namespace JobPortal.Controllers
                 User = _mapper.Map<UserDto>(user)
             };
 
+            _logger.LogInformation(
+                "User {Email} logged in successfully",
+                user.Email);
+
             return Ok(new ApiResponse<LoginResponseDto>
             {
                 Success = true,
@@ -74,6 +87,4 @@ namespace JobPortal.Controllers
             });
         }
     }
-
-
 }

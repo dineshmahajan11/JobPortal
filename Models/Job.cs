@@ -20,6 +20,8 @@
 
         public ICollection<JobApplication> Applications { get; set; }
         = new List<JobApplication>();
+        public ICollection<SavedJob> SavedByUsers { get; set; }
+        = new List<SavedJob>();
         public User Recruiter { get; set; } = null!;
     }
 }

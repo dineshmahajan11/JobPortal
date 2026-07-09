@@ -1,6 +1,7 @@
 ﻿using JobPortal.DTOs;
 using JobPortal.Models;
 using JobPortal.Repositories;
+using AutoMapper;
 
 
 namespace JobPortal.Services
@@ -8,18 +9,22 @@ namespace JobPortal.Services
     public class JobService : IJobService
     {
         private readonly IJobRepository _jobRepository;
+        private readonly IMapper _mapper;
 
-        public JobService(IJobRepository jobRepository)
+        public JobService(IJobRepository jobRepository, IMapper mapper)
         {
             _jobRepository = jobRepository;
+            _mapper = mapper;
         }
 
-        public List<Job> GetAllJobs()
+        public List<JobDto> GetAllJobs()
         {
-            return _jobRepository.GetAll();
+            var jobs = _jobRepository.GetAll();
+
+            return _mapper.Map<List<JobDto>>(jobs);
         }
 
-        public Job CreateJob(CreateJobDto dto, int recruiterId)
+        public JobDto CreateJob(CreateJobDto dto, int recruiterId)
         {
             var job = new Job
             {
@@ -32,15 +37,22 @@ namespace JobPortal.Services
                 CreatedDate = DateTime.UtcNow
             };
 
-            return _jobRepository.Add(job);
+            var createdJob = _jobRepository.Add(job);
+
+            return _mapper.Map<JobDto>(createdJob);
         }
 
-        public Job? GetJobById(int id)
+        public JobDto? GetJobById(int id)
         {
-            return _jobRepository.GetById(id);
+            var job = _jobRepository.GetById(id);
+
+            if (job == null)
+                return null;
+
+            return _mapper.Map<JobDto>(job);
         }
 
-        public Job? UpdateJob(int id, CreateJobDto dto, int recruiterId)
+        public JobDto? UpdateJob(int id, CreateJobDto dto, int recruiterId)
         {
             var job = _jobRepository.GetById(id);
 
@@ -54,7 +66,9 @@ namespace JobPortal.Services
             job.Salary = dto.Salary;
             job.RecruiterId = recruiterId;
 
-            return _jobRepository.Update(job);
+            var updatedJob = _jobRepository.Update(job);
+
+            return _mapper.Map<JobDto>(updatedJob);
         }
 
         public bool DeleteJob(int id)
