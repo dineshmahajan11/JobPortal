@@ -85,6 +85,7 @@ namespace JobPortal.Controllers
                 Message = "Login successful.",
                 Data = response
             });
+
         }
     }
 }
