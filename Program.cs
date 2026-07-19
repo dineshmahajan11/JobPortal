@@ -26,6 +26,18 @@ namespace JobPortal
             // Controllers
             builder.Services.AddControllers();
 
+            // CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:5173")
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
+
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -146,6 +158,8 @@ namespace JobPortal
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowReactApp");
 
             app.UseStaticFiles();
 
