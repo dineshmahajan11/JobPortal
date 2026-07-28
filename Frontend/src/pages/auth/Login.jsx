@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthService from "../../services/AuthService";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -17,25 +19,41 @@ function Login() {
 
             console.log("Login Success:", response);
 
+            // Save JWT Token
+            localStorage.setItem("token", response.data.token);
+
+            // Save Logged-in User
+            localStorage.setItem(
+                "user",
+                JSON.stringify(response.data.user)
+            );
+
             alert(response.message);
+
+            // Redirect based on role
+            if (response.data.user.role === "Recruiter") {
+                navigate("/recruiter/dashboard");
+            }
+            else if (response.data.user.role === "JobSeeker") {
+                navigate("/jobseeker/dashboard");
+            }
         }
         catch (error) {
+            console.error(error);
 
-    console.log(error);
-
-    console.log(error.response);
-
-    console.log(error.message);
-
-    alert(error.message);
-}
+            if (error.response) {
+                alert(error.response.data.message);
+            }
+            else {
+                alert("Unable to connect to server.");
+            }
+        }
     };
 
     return (
         <div className="container mt-5">
             <div className="row justify-content-center">
                 <div className="col-md-5">
-
                     <div className="card shadow">
                         <div className="card-body">
 
@@ -53,9 +71,10 @@ function Login() {
                                     <input
                                         type="email"
                                         className="form-control"
-                                        placeholder="Enter email"
+                                        placeholder="Enter Email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
+                                        required
                                     />
                                 </div>
 
@@ -67,9 +86,10 @@ function Login() {
                                     <input
                                         type="password"
                                         className="form-control"
-                                        placeholder="Enter password"
+                                        placeholder="Enter Password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
+                                        required
                                     />
                                 </div>
 
@@ -90,7 +110,6 @@ function Login() {
 
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
