@@ -1,37 +1,33 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
 import {
     getUser,
     getToken,
     saveAuthData,
-    clearAuthData
+    clearAuthData,
 } from "../utils/auth";
 
-export const AuthContext = createContext(null);
+export const defaultAuthContext = {
+    user: null,
+    token: null,
+    login: () => {},
+    logout: () => {},
+    isAuthenticated: false,
+};
 
-function AuthProvider({ children }) {
+const AuthContext = createContext(defaultAuthContext);
 
-    // Initialize state from localStorage
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null);
+export const AuthProvider = ({ children }) => {
+   const [user, setUser] = useState(getUser());
+const [token, setToken] = useState(getToken());
 
-    // Load user and token when the application starts
-    useEffect(() => {
-        setUser(getUser());
-        setToken(getToken());
-    }, []);
-
-    // Login function
-    const login = (token, user) => {
-        saveAuthData(token, user);
-
-        setToken(token);
-        setUser(user);
+    const login = (newToken, newUser) => {
+        saveAuthData(newToken, newUser);
+        setToken(newToken);
+        setUser(newUser);
     };
 
-    // Logout function
     const logout = () => {
         clearAuthData();
-
         setToken(null);
         setUser(null);
     };
@@ -43,12 +39,13 @@ function AuthProvider({ children }) {
                 token,
                 login,
                 logout,
-                isAuthenticated: !!token
+                isAuthenticated: !!token,
             }}
         >
             {children}
         </AuthContext.Provider>
     );
-}
+};
 
 export default AuthProvider;
+export { AuthContext };

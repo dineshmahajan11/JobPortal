@@ -7,6 +7,7 @@ import RecruiterDashboard from "./pages/recruiter/Dashboard";
 import JobSeekerDashboard from "./pages/jobseeker/Dashboard";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
+import DashboardLayout from "./layouts/DashboardLayout";
 
 function App() {
     return (
@@ -21,29 +22,29 @@ function App() {
                 {/* Recruiter Routes */}
                 <Route
                     element={
-                        <ProtectedRoute
-                            allowedRoles={["Recruiter"]}
-                        />
+                        <ProtectedRoute allowedRoles={["Recruiter"]} />
                     }
                 >
-                    <Route
-                        path="/recruiter/dashboard"
-                        element={<RecruiterDashboard />}
-                    />
+                    <Route element={<DashboardLayout />}>
+                        <Route
+                            path="/recruiter/dashboard"
+                            element={<RecruiterDashboard />}
+                        />
+                    </Route>
                 </Route>
 
                 {/* Job Seeker Routes */}
                 <Route
                     element={
-                        <ProtectedRoute
-                            allowedRoles={["JobSeeker"]}
-                        />
+                        <ProtectedRoute allowedRoles={["JobSeeker"]} />
                     }
                 >
-                    <Route
-                        path="/jobseeker/dashboard"
-                        element={<JobSeekerDashboard />}
-                    />
+                    <Route element={<DashboardLayout />}>
+                        <Route
+                            path="/jobseeker/dashboard"
+                            element={<JobSeekerDashboard />}
+                        />
+                    </Route>
                 </Route>
 
             </Routes>
