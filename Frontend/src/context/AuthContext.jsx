@@ -6,13 +6,7 @@ import {
     clearAuthData,
 } from "../utils/auth";
 
-export const defaultAuthContext = {
-    user: null,
-    token: null,
-    login: () => {},
-    logout: () => {},
-    isAuthenticated: false,
-};
+import { defaultAuthContext } from "./authContext";
 
 const AuthContext = createContext(defaultAuthContext);
 

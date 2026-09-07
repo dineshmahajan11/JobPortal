@@ -20,7 +20,7 @@ function TopNavbar() {
                 <div className="ms-auto d-flex align-items-center">
 
                     <span className="me-3">
-                        Welcome, <strong>{user?.name}</strong>
+                        Welcome, <strong>{user?.fullName}</strong>
                     </span>
 
                     <button
